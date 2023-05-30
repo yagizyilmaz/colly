@@ -17,5 +17,3 @@ require (
 	golang.org/x/net v0.7.0
 	google.golang.org/appengine v1.6.6
 )
-
-replace github.com/gocolly/colly/v2 => github.com/yagizyilmaz/colly master
