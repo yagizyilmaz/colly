@@ -19,3 +19,4 @@ require (
 )
 
 replace github.com/gocolly/colly/v2 => github.com/yagizyilmaz/colly latest
+replace github.com/gocolly/colly/v2/queue => github.com/yagizyilmaz/colly/queue latest
