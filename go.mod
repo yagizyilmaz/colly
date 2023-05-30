@@ -1,6 +1,6 @@
-module github.com/yagizyilmaz/colly/v2
+module github.com/yagizyilmaz/colly
 
-go 1.12
+go 1.20
 
 require (
 	github.com/PuerkitoBio/goquery v1.5.1
@@ -18,4 +18,4 @@ require (
 	google.golang.org/appengine v1.6.6
 )
 
-replace github.com/gocolly/colly/v2 => github.com/yagizyilmaz/colly/v2 latest
+replace github.com/gocolly/colly/v2 => github.com/yagizyilmaz/colly latest
