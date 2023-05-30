@@ -118,7 +118,7 @@ type Collector struct {
 	// MaxRequests limit the number of requests done by the instance.
 	// Set it to 0 for infinite requests (default).
 	MaxRequests  uint32
-	MaxRedirects uint32
+	MaxRedirects int
 
 	store                    storage.Storage
 	debugger                 debug.Debugger
@@ -283,7 +283,7 @@ var envMap = map[string]func(*Collector, string){
 	"MAX_REDIRECTS": func(c *Collector, val string) {
 		maxRedirects, err := strconv.Atoi(val)
 		if err != nil {
-			c.MaxRedirects = uint32(maxRedirects)
+			c.MaxRedirects = maxRedirects
 		}
 	},
 	"PARSE_HTTP_ERROR_RESPONSE": func(c *Collector, val string) {
@@ -346,7 +346,7 @@ func MaxRequests(max uint32) CollectorOption {
 	}
 }
 
-func MaxRedirects(max uint32) func(*Collector) {
+func MaxRedirects(max int) CollectorOption {
 	return func(c *Collector) {
 		c.MaxRedirects = max
 	}
