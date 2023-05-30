@@ -117,7 +117,8 @@ type Collector struct {
 	Context context.Context
 	// MaxRequests limit the number of requests done by the instance.
 	// Set it to 0 for infinite requests (default).
-	MaxRequests uint32
+	MaxRequests  uint32
+	MaxRedirects uint32
 
 	store                    storage.Storage
 	debugger                 debug.Debugger
@@ -279,6 +280,12 @@ var envMap = map[string]func(*Collector, string){
 			c.MaxRequests = uint32(maxRequests)
 		}
 	},
+	"MAX_REDIRECTS": func(c *Collector, val string) {
+		maxRedirects, err := strconv.Atoi(val)
+		if err != nil {
+			c.MaxRedirects = uint32(maxRedirects)
+		}
+	},
 	"PARSE_HTTP_ERROR_RESPONSE": func(c *Collector, val string) {
 		c.ParseHTTPErrorResponse = isYesString(val)
 	},
@@ -336,6 +343,12 @@ func MaxDepth(depth int) CollectorOption {
 func MaxRequests(max uint32) CollectorOption {
 	return func(c *Collector) {
 		c.MaxRequests = max
+	}
+}
+
+func MaxRedirects(max uint32) func(*Collector) {
+	return func(c *Collector) {
+		c.MaxRedirects = max
 	}
 }
 
@@ -469,6 +482,7 @@ func (c *Collector) Init() {
 	c.Headers = nil
 	c.MaxDepth = 0
 	c.MaxRequests = 0
+	c.MaxRedirects = 10
 	c.store = &storage.InMemoryStorage{}
 	c.store.Init()
 	c.MaxBodySize = 10 * 1024 * 1024
@@ -1303,6 +1317,7 @@ func (c *Collector) Clone() *Collector {
 		MaxBodySize:            c.MaxBodySize,
 		MaxDepth:               c.MaxDepth,
 		MaxRequests:            c.MaxRequests,
+		MaxRedirects:           c.MaxRedirects,
 		DisallowedURLFilters:   c.DisallowedURLFilters,
 		URLFilters:             c.URLFilters,
 		CheckHead:              c.CheckHead,
@@ -1367,8 +1382,8 @@ func (c *Collector) checkRedirectFunc() func(req *http.Request, via []*http.Requ
 			return c.redirectHandler(req, via)
 		}
 
-		// Honor golangs default of maximum of 10 redirects
-		if len(via) >= 10 {
+		// Override golangs default of maximum of 10 redirects
+		if len(via) >= c.MaxRedirects && c.MaxRedirects > 0 {
 			return http.ErrUseLastResponse
 		}
 
