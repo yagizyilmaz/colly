@@ -18,5 +18,4 @@ require (
 	google.golang.org/appengine v1.6.6
 )
 
-replace github.com/gocolly/colly/v2 => github.com/yagizyilmaz/colly latest
-replace github.com/gocolly/colly/v2/queue => github.com/yagizyilmaz/colly/queue latest
+replace github.com/gocolly/colly/v2 => github.com/yagizyilmaz/colly master
